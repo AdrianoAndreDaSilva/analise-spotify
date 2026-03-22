@@ -1,0 +1,188 @@
+============================================================
+1. LEITURA E EXPLORAÇÃO DO DATASET
+============================================================
+
+Shape: 114000 registros x 22 atributos
+
+Primeiras linhas:
+   Unnamed: 0.1  Unnamed: 0  ... time_signature track_genre
+0             0           0  ...              4    acoustic
+1             1           1  ...              4    acoustic
+2             2           2  ...              4    acoustic
+3             3           3  ...              3    acoustic
+4             4           4  ...              4    acoustic
+
+[5 rows x 22 columns]
+
+Nomes das colunas:
+['Unnamed: 0.1', 'Unnamed: 0', 'track_id', 'artists', 'album_name', 'track_name', 'popularity', 'duration_ms', 'explicit', 'danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'time_signature', 'track_genre']
+
+============================================================
+2. ANÁLISE INICIAL DOS DADOS
+============================================================
+
+--- Tipos de variáveis ---
+Unnamed: 0.1          int64
+Unnamed: 0            int64
+track_id             object
+artists              object
+album_name           object
+track_name           object
+popularity            int64
+duration_ms           int64
+explicit               bool
+danceability        float64
+energy              float64
+key                   int64
+loudness            float64
+mode                  int64
+speechiness         float64
+acousticness        float64
+instrumentalness    float64
+liveness            float64
+valence             float64
+tempo               float64
+time_signature        int64
+track_genre          object
+dtype: object
+
+--- Valores ausentes ---
+            Ausentes  Percentual (%)
+artists            1        0.000877
+album_name         1        0.000877
+track_name         1        0.000877
+
+--- Duplicatas ---
+Registros duplicados: 32656
+
+--- Estatísticas descritivas iniciais ---
+        Unnamed: 0.1     Unnamed: 0  ...          tempo  time_signature
+count  114000.000000  114000.000000  ...  114000.000000   114000.000000
+mean    56999.500000   56999.500000  ...     122.147837        3.904035
+std     32909.109681   32909.109681  ...      29.978197        0.432621
+min         0.000000       0.000000  ...       0.000000        0.000000
+25%     28499.750000   28499.750000  ...      99.218750        4.000000
+50%     56999.500000   56999.500000  ...     122.017000        4.000000
+75%     85499.250000   85499.250000  ...     140.071000        4.000000
+max    113999.000000  113999.000000  ...     243.372000        5.000000
+
+[8 rows x 16 columns]
+Gráfico salvo: 01_valores_ausentes.png
+
+============================================================
+3. PRÉ-PROCESSAMENTO DOS DADOS
+============================================================
+
+[3.1] Duplicatas removidas: 32656 registros
+
+[3.2] Tratamento de valores ausentes:
+  Registros removidos por conta de valores ausentes: 1
+  ✓ Nenhum valor ausente restante.
+
+[3.3] 'duration_ms' convertida para 'duration_min' (minutos)
+
+[3.4] Colunas removidas: ['Unnamed: 0', 'Unnamed: 0.1', 'track_id']
+
+[3.5] Registros removidos por popularity = 0: 5451
+
+[3.6] Validação de intervalos:
+  - 'loudness': 57 registros com valor inválido
+  - 'tempo': 141 registros com valor inválido
+  - 'time_signature': 146 registros com valor inválido
+  Total de registros removidos por valores inválidos: 203
+
+[3.7] Clipagem de outliers (IQR):
+  - 'popularity': 26 outliers clipados (limite [-17.5000, 90.5000])
+  - 'danceability': 305 outliers clipados (limite [0.0910, 1.0510])
+  - 'energy': 0 outliers clipados (limite [-0.1260, 1.4500])
+  - 'loudness': 4055 outliers clipados (limite [-18.1095, 2.6465])
+  - 'speechiness': 8969 outliers clipados (limite [-0.0413, 0.1651])
+  - 'acousticness': 0 outliers clipados (limite [-0.8852, 1.5151])
+  - 'instrumentalness': 16167 outliers clipados (limite [-0.2205, 0.3675])
+  - 'liveness': 6140 outliers clipados (limite [-0.1807, 0.5644])
+  - 'valence': 0 outliers clipados (limite [-0.4005, 1.3235])
+  - 'tempo': 232 outliers clipados (limite [38.5345, 202.3225])
+  - 'duration_min': 3424 outliers clipados (limite [0.5508, 6.8183])
+
+[3.8] Normalização Min-Max aplicada nas colunas: ['popularity', 'danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'duration_min']
+
+============================================================
+4. ANÁLISE ESTATÍSTICA BÁSICA E CORRELAÇÃO
+============================================================
+
+--- Estatísticas descritivas (dados originais) ---
+                     Média   Mediana  Desvio Padrão   Mínimo    Máximo
+popularity         37.1242   37.0000        17.6902   1.0000   90.5000
+danceability        0.5624    0.5750         0.1745   0.0910    0.9850
+energy              0.6407    0.6810         0.2545   0.0000    1.0000
+loudness           -8.1733   -7.2360         4.1369 -18.1095   -0.0010
+speechiness         0.0694    0.0493         0.0453   0.0221    0.1651
+acousticness        0.3233    0.1850         0.3355   0.0000    0.9960
+instrumentalness    0.0922    0.0001         0.1520   0.0000    0.3675
+liveness            0.2039    0.1330         0.1507   0.0092    0.5644
+valence             0.4658    0.4510         0.2619   0.0000    0.9950
+tempo             122.6473  122.5460        29.6211  38.5345  202.3225
+duration_min        3.7656    3.5984         1.3066   0.5508    6.8184
+Gráfico salvo: 02_distribuicoes.png
+Gráfico salvo: 03_boxplots.png
+Gráfico salvo: 04_correlacao.png
+Gráfico salvo: 05_correlacao_popularity.png
+Gráfico salvo: 06_top_generos.png
+Gráfico salvo: 07_energy_vs_popularity.png
+Gráfico salvo: 08_danceability_vs_valence.png
+
+============================================================
+5. DATASET FINAL
+============================================================
+
+Shape final (dados limpos): (75689, 20)
+Shape final (dados normalizados): (75689, 20)
+
+--- Totalização de registros removidos ---
+  Duplicatas:               32656
+  Valores ausentes:         1
+  Popularity = 0:           5451
+  Valores inválidos:        203
+  Total removido:           38311
+  Registros iniciais:       114000
+  Registros finais:         75689
+
+--- Amostra do dataset limpo ---
+                  artists  ... duration_min
+0             Gen Hoshino  ...     3.844433
+1            Ben Woodward  ...     2.493500
+2  Ingrid Michaelson;ZAYN  ...     3.513767
+3            Kina Grannis  ...     3.365550
+4        Chord Overstreet  ...     3.314217
+
+[5 rows x 20 columns]
+
+--- Amostra do dataset normalizado ---
+   popularity  danceability    energy  ...   valence     tempo  duration_min
+0    0.804469      0.654362  0.460989  ...  0.718593  0.301503      0.525509
+1    0.603352      0.368009  0.165983  ...  0.268342  0.237835      0.309967
+2    0.625698      0.388143  0.358987  ...  0.120603  0.230771      0.472751
+3    0.782123      0.195749  0.059581  ...  0.143719  0.874335      0.449103
+4    0.905028      0.589485  0.442989  ...  0.167839  0.497072      0.440913
+
+[5 rows x 11 columns]
+
+✓ Dataset limpo salvo em: spotify_clean.csv
+✓ Dataset normalizado salvo em: spotify_normalized.csv
+
+============================================================
+RESUMO DAS TRANSFORMAÇÕES REALIZADAS
+============================================================
+
+1. Remoção de duplicatas (critério: track_name + artists)
+2. Tratamento de valores ausentes:
+   - Registros com 3 ou mais valores ausentes: removidos
+   - Numéricos (1 ou 2 ausentes): preenchidos com a mediana
+   - Categóricos (1 ou 2 ausentes): preenchidos com a moda
+3. Conversão de 'duration_ms' para 'duration_min' (minutos)
+4. Remoção de colunas irrelevantes (Unnamed: 0, track_id)
+5. Remoção de faixas com popularity = 0
+6. Validação de intervalos conhecidos por coluna
+7. Clipagem de outliers via IQR (limites Q1 - 1.5*IQR e Q3 + 1.5*IQR)
+8. Normalização Min-Max das variáveis numéricas principais
+
